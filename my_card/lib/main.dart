@@ -43,6 +43,7 @@ class _MyHomePageState extends State<MyHomePage> {
       backgroundColor: Colors.blueGrey,
       body: SafeArea(
         child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             CircleAvatar(
               radius: 55,
@@ -51,14 +52,17 @@ class _MyHomePageState extends State<MyHomePage> {
                 'https://drive.google.com/uc?export=download&id=1ChxJLqsybnLkdtJBlhIkrBxvcEGllv4Y',
               ),
             ),
-            Text(
-              'Maxim Morev',
-              style: TextStyle(
-                fontStyle: FontStyle.normal,
-                fontSize: 23,
-                color: Colors.white,
-                fontWeight: FontWeight.bold,
-                fontFamily: 'PressStart2P',
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Text(
+                'Maxim Morev',
+                style: TextStyle(
+                  fontStyle: FontStyle.normal,
+                  fontSize: 23,
+                  color: Colors.white,
+                  fontWeight: FontWeight.bold,
+                  fontFamily: 'PressStart2P',
+                ),
               ),
             ),
             Text(
@@ -72,56 +76,52 @@ class _MyHomePageState extends State<MyHomePage> {
                 fontFamily: 'Saira',
               ),
             ),
-            Container(
-              color: Colors.white,
-              padding: EdgeInsets.all(10.0),
-              margin: EdgeInsets.symmetric(
-                vertical: 10.0,
-                horizontal: 25.0,
-              ),
-              child: Row(
-                children: <Widget>[
-                  Icon(
-                    Icons.phone,
-                    color: Colors.teal,
-                  ),
-                  SizedBox(
-                    width: 10.0,
-                  ),
-                  Text(
-                    '+7 926 392 63 69',
-                    style: TextStyle(
-                      fontSize: 20,
-                      fontFamily: 'Saira',
-                    ),
-                  ),
-                ],
+            SizedBox(
+              height: 20.0,
+              width: 280.0,
+              child: Divider(
+                color: Colors.teal.shade100,
+                height: 3.0,
               ),
             ),
-            Container(
+            Card(
               color: Colors.white,
-              padding: EdgeInsets.all(10.0),
               margin: EdgeInsets.symmetric(
                 vertical: 10.0,
                 horizontal: 25.0,
               ),
-              child: Row(
-                children: <Widget>[
-                  Icon(
-                    Icons.email,
-                    color: Colors.teal,
+              child: ListTile(
+                leading: Icon(
+                  Icons.phone,
+                  color: Colors.teal,
+                ),
+                title: Text(
+                  '+7 926 392 63 69',
+                  style: TextStyle(
+                    fontSize: 20,
+                    fontFamily: 'Saira',
                   ),
-                  SizedBox(
-                    width: 10.0,
+                ),
+              ),
+            ),
+            Card(
+              color: Colors.white,
+              margin: EdgeInsets.symmetric(
+                vertical: 10.0,
+                horizontal: 25.0,
+              ),
+              child: ListTile(
+                leading: Icon(
+                  Icons.email,
+                  color: Colors.teal,
+                ),
+                title: Text(
+                  'maxmorev@gmail.com',
+                  style: TextStyle(
+                    fontSize: 20,
+                    fontFamily: 'Saira',
                   ),
-                  Text(
-                    'maxmorev@gmail.com',
-                    style: TextStyle(
-                      fontSize: 20,
-                      fontFamily: 'Saira',
-                    ),
-                  ),
-                ],
+                ),
               ),
             ),
           ],
