@@ -76,14 +76,3 @@ class _PriceScreenState extends State<PriceScreen> {
     );
   }
 }
-//DropdownButton<String>(
-//value: selectedCurrency,
-//icon: Icon(Icons.credit_card),
-//items: getMenuItems(),
-//onChanged: (value) {
-//setState(() {
-//selectedCurrency = value;
-//print(value);
-//});
-//},
-//),
