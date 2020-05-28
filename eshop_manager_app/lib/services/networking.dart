@@ -1,7 +1,10 @@
 import 'dart:io';
-
 import 'package:http/http.dart' as http;
+import 'package:path/path.dart';
+import 'package:async/async.dart';
 import 'dart:convert';
+
+import 'package:http/http.dart';
 
 class NetworkHelper {
   final String basicCridentials;
@@ -29,6 +32,21 @@ class NetworkHelper {
     try {
       http.Response uriResponse = await http.get(url);
       return decodeResponse(uriResponse);
+    } catch (e) {
+      print(e);
+    }
+  }
+
+  Future<dynamic> postFile(File file, String url) async {
+    try {
+      var uri = Uri.parse(url);
+      var request = http.MultipartRequest('POST', uri)
+        ..headers.addAll(basicAuthorizationHeader())
+        ..files.add(await http.MultipartFile.fromPath('file', file.path));
+      // send
+      http.StreamedResponse streamedResponse = await request.send();
+      http.Response response = await http.Response.fromStream(streamedResponse);
+      return decodeResponse(response);
     } catch (e) {
       print(e);
     }

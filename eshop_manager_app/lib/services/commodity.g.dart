@@ -95,3 +95,33 @@ Map<String, dynamic> _$AttributeDtoToJson(AttributeDto instance) =>
       'value': instance.value,
       'measure': instance.measure,
     };
+
+RequestCommodity _$RequestCommodityFromJson(Map<String, dynamic> json) {
+  return RequestCommodity(
+    name: json['name'] as String,
+    shortDescription: json['shortDescription'] as String,
+    overview: json['overview'] as String,
+    amount: json['amount'] as int,
+    price: (json['price'] as num)?.toDouble(),
+    currencyCode: json['currencyCode'] as String,
+    typeId: json['typeId'] as int,
+    propertyValues:
+        (json['propertyValues'] as Set)?.map((e) => e as int)?.toSet(),
+    images: (json['images'] as List)?.map((e) => e as String)?.toList(),
+    branchId: json['branchId'] as int,
+  );
+}
+
+Map<String, dynamic> _$RequestCommodityToJson(RequestCommodity instance) =>
+    <String, dynamic>{
+      'name': instance.name,
+      'shortDescription': instance.shortDescription,
+      'overview': instance.overview,
+      'amount': instance.amount,
+      'price': instance.price,
+      'currencyCode': instance.currencyCode,
+      'typeId': instance.typeId,
+      'propertyValues': instance.propertyValues,
+      'images': instance.images,
+      'branchId': instance.branchId,
+    };

@@ -31,12 +31,12 @@ class _TypesScreenState extends State<TypesScreen> {
     }
   }
 
-  List<Widget> _getTypes(List types) {
+  List<Widget> _getTypes(List<CommodityType> types) {
     return types
         .map(
           (e) => Card(
             child: ListTile(
-              title: Text(e['name']),
+              title: Text(e.name),
               trailing: Row(
                 mainAxisSize: MainAxisSize.min,
                 children: <Widget>[
@@ -47,7 +47,7 @@ class _TypesScreenState extends State<TypesScreen> {
                         MaterialPageRoute(builder: (context) {
                           return AttributesScreen(
                             widget.eshopManager,
-                            CommodityType.fromJson(e),
+                            e,
                           );
                         }),
                       );
@@ -63,8 +63,7 @@ class _TypesScreenState extends State<TypesScreen> {
                       Navigator.push(
                         context,
                         MaterialPageRoute(builder: (context) {
-                          return TypeUpdateScreen(
-                              CommodityType.fromJson(e), widget.eshopManager);
+                          return TypeUpdateScreen(e, widget.eshopManager);
                         }),
                       );
                     },
@@ -78,7 +77,7 @@ class _TypesScreenState extends State<TypesScreen> {
                     builder: (BuildContext context) {
                       return new IconButton(
                         onPressed: () {
-                          deleteType(context, CommodityType.fromJson(e).id);
+                          deleteType(context, e.id);
                         },
                         icon: Icon(
                           Icons.delete,
@@ -97,7 +96,7 @@ class _TypesScreenState extends State<TypesScreen> {
   }
 
   void _loadTypes() async {
-    var types = await _typesModel.getTypes();
+    List<CommodityType> types = await _typesModel.getTypes();
     _updateUI(types);
   }
 

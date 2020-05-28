@@ -1,3 +1,6 @@
+import 'dart:io';
+
+import 'package:E0ShopManager/utils/constants.dart';
 import 'package:E0ShopManager/utils/eshop_manager.dart';
 import 'package:json_annotation/json_annotation.dart';
 
@@ -12,6 +15,7 @@ part 'commodity.g.dart';
 const endpoint = 'http://192.168.199.5:8080';
 const listCommodityGridUrl =
     '$endpoint/rest/api/public/commodities/?page={page}&rows={rows}';
+const fileUplad = '$endpoint/rest/api/private/upload/';
 
 class CommodityModel {
   final EshopManager eshopManager;
@@ -20,6 +24,11 @@ class CommodityModel {
   CommodityModel(this.eshopManager) {
     _networkHelper =
         NetworkHelper(basicCridentials: eshopManager.getCridentials());
+  }
+
+  Future<String> uploadFile(File file) async {
+    dynamic resp = await _networkHelper.postFile(file, fileUplad);
+    return resp['uri'];
   }
 
   Future<CommodityGrid> getCommodityGrid(int page, int rows) async {
@@ -106,4 +115,39 @@ class AttributeDto {
   factory AttributeDto.fromJson(Map<String, dynamic> json) =>
       _$AttributeDtoFromJson(json);
   Map<String, dynamic> toJson() => _$AttributeDtoToJson(this);
+}
+
+@JsonSerializable()
+class RequestCommodity {
+  String name;
+  String shortDescription;
+  String overview;
+  int amount;
+  double price;
+  String currencyCode;
+  int typeId;
+  Set<int> propertyValues = {};
+  List<String> images = [];
+  int branchId;
+
+  RequestCommodity({
+    this.name,
+    this.shortDescription,
+    this.overview,
+    this.amount,
+    this.price,
+    this.currencyCode,
+    this.typeId,
+    this.propertyValues,
+    this.images,
+    this.branchId,
+  }) {
+    if (this.propertyValues == null) {
+      propertyValues = {};
+    }
+    if (this.images == null) {
+      this.images = List(EshopNumbers.UPLOAD_IMAGES);
+    }
+  }
+  Map<String, dynamic> toJson() => _$RequestCommodityToJson(this);
 }

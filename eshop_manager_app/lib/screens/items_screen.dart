@@ -1,3 +1,5 @@
+import 'package:E0ShopManager/screens/item_add_screen.dart';
+import 'package:E0ShopManager/screens/select_type_screen.dart';
 import 'package:E0ShopManager/services/commodity.dart';
 import 'package:E0ShopManager/utils/eshop_manager.dart';
 import 'package:flutter/material.dart';
@@ -97,11 +99,40 @@ class _ItemsScreenState extends State<ItemsScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          title: const Text('Items'),
-        ),
-        body: ListView(
-          children: _itemListView,
-        ));
+      appBar: AppBar(
+        title: const Text('Items'),
+      ),
+      body: ListView(
+        children: _itemListView,
+      ),
+      floatingActionButton: AddItemButton(widget.eshopManager),
+    );
+  }
+}
+
+class AddItemButton extends StatelessWidget {
+  final EshopManager eshopManager;
+
+  AddItemButton(this.eshopManager);
+
+  @override
+  Widget build(BuildContext context) =>
+      Builder(builder: (BuildContext context) {
+        return new FloatingActionButton(
+          onPressed: () {
+            _navigateToAddCommodity(context);
+          },
+          tooltip: 'Add item',
+          child: const Icon(Icons.add),
+        );
+      });
+
+  void _navigateToAddCommodity(BuildContext context) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) {
+        return SelectTypeScreen(eshopManager);
+      }),
+    );
   }
 }

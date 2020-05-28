@@ -18,9 +18,13 @@ class TypesModel {
         NetworkHelper(basicCridentials: eshopManager.getCridentials());
   }
 
-  Future<dynamic> getTypes() async {
+  Future<List<CommodityType>> getTypes() async {
     dynamic types = await _networkHelper.getData(listTypesUrl);
-    return types;
+    return _convertTypesFromJson(types);
+  }
+
+  List<CommodityType> _convertTypesFromJson(List dynamic) {
+    return dynamic.map((e) => CommodityType.fromJson(e)).toList();
   }
 
   Future<dynamic> addType(CommodityType ct) async {

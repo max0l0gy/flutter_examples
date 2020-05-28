@@ -68,3 +68,11 @@ class EshopAttribute extends StatelessWidget {
     );
   }
 }
+
+class EshopNumbers {
+  static const double DELAITION_MAX = 3;
+  static const double DELAITION_MIN = 1;
+  static const double CREATE_IMAGE_WIDTH = 150.0;
+  static const double CREATE_IMAGE_HEIGHT = 150.0;
+  static const int UPLOAD_IMAGES = 6;
+}
