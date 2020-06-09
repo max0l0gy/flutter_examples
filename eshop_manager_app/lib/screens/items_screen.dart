@@ -105,19 +105,7 @@ class _ItemsScreenState extends State<ItemsScreen> {
       body: ListView(
         children: _itemListView,
       ),
-      floatingActionButton: AddItemButton(widget.eshopManager),
-    );
-  }
-}
-
-class AddItemButton extends StatelessWidget {
-  final EshopManager eshopManager;
-
-  AddItemButton(this.eshopManager);
-
-  @override
-  Widget build(BuildContext context) =>
-      Builder(builder: (BuildContext context) {
+      floatingActionButton: Builder(builder: (BuildContext context) {
         return new FloatingActionButton(
           onPressed: () {
             _navigateToAddCommodity(context);
@@ -125,14 +113,18 @@ class AddItemButton extends StatelessWidget {
           tooltip: 'Add item',
           child: const Icon(Icons.add),
         );
-      });
-
-  void _navigateToAddCommodity(BuildContext context) {
-    Navigator.push(
-      context,
-      MaterialPageRoute(builder: (context) {
-        return SelectTypeScreen(eshopManager);
       }),
     );
+  }
+
+  void _navigateToAddCommodity(BuildContext context) async {
+    var resp = await Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) {
+        return SelectTypeScreen(widget.eshopManager);
+      }),
+    );
+    print('Resp from add item screen ${resp}');
+    if (resp != null) _loadItems();
   }
 }

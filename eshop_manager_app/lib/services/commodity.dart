@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:E0ShopManager/utils/constants.dart';
@@ -16,6 +17,7 @@ const endpoint = 'http://192.168.199.5:8080';
 const listCommodityGridUrl =
     '$endpoint/rest/api/public/commodities/?page={page}&rows={rows}';
 const fileUplad = '$endpoint/rest/api/private/upload/';
+const addCommodityUrl = '$endpoint/rest/api/private/commodity/';
 
 class CommodityModel {
   final EshopManager eshopManager;
@@ -36,12 +38,40 @@ class CommodityModel {
     getUrl = getUrl.replaceAll('{rows}', rows.toString());
     dynamic items = await _networkHelper.getPrivateData(getUrl);
     print(items);
-    return _convertCommodityGrid(items);
+    return CommodityGrid.fromJson(items);
   }
 
-  CommodityGrid _convertCommodityGrid(dynamic orders) {
-    return CommodityGrid.fromJson(orders);
+  Future<Message> addCommodity(RequestCommodity rc) async {
+    dynamic message =
+        await _networkHelper.postData(addCommodityUrl, rc.toJsonString());
+    return Message.fromJson(message);
   }
+}
+
+@JsonSerializable(explicitToJson: true)
+class Message {
+  static String SUCCESS = 'success';
+  static String ERROR = 'error';
+  String status;
+  String url;
+  String message;
+  List<ErrorDetail> errors;
+
+  Message(this.status, this.url, this.message, this.errors);
+  factory Message.fromJson(Map<String, dynamic> json) =>
+      _$MessageFromJson(json);
+  Map<String, dynamic> toJson() => _$MessageToJson(this);
+}
+
+@JsonSerializable(explicitToJson: true)
+class ErrorDetail {
+  String field;
+  String message;
+
+  ErrorDetail(this.field, this.message);
+  factory ErrorDetail.fromJson(Map<String, dynamic> json) =>
+      _$ErrorDetailFromJson(json);
+  Map<String, dynamic> toJson() => _$ErrorDetailToJson(this);
 }
 
 /**
@@ -142,12 +172,11 @@ class RequestCommodity {
     this.images,
     this.branchId,
   }) {
-    if (this.propertyValues == null) {
-      propertyValues = {};
-    }
-    if (this.images == null) {
-      this.images = List(EshopNumbers.UPLOAD_IMAGES);
-    }
+    if (this.propertyValues == null) propertyValues = {};
+    if (this.images == null) this.images = List(EshopNumbers.UPLOAD_IMAGES);
+    if (this.amount == null) this.amount = 1;
+    if (this.price == null) this.price = 50;
   }
   Map<String, dynamic> toJson() => _$RequestCommodityToJson(this);
+  String toJsonString() => jsonEncode(toJson());
 }

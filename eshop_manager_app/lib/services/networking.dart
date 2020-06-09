@@ -22,9 +22,8 @@ class NetworkHelper {
     if (resp.statusCode == 200) {
       return jsonDecode(resp.body);
     } else {
-      print('!STATUS!=${resp.statusCode}');
-      print(resp);
-      return null;
+      print('Error STATUS!=${resp.statusCode}');
+      return jsonDecode(resp.body);
     }
   }
 

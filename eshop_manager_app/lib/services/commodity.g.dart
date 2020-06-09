@@ -6,6 +6,38 @@ part of 'commodity.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
+Message _$MessageFromJson(Map<String, dynamic> json) {
+  return Message(
+    json['status'] as String,
+    json['url'] as String,
+    json['message'] as String,
+    (json['errors'] as List)
+        ?.map((e) =>
+            e == null ? null : ErrorDetail.fromJson(e as Map<String, dynamic>))
+        ?.toList(),
+  );
+}
+
+Map<String, dynamic> _$MessageToJson(Message instance) => <String, dynamic>{
+      'status': instance.status,
+      'url': instance.url,
+      'message': instance.message,
+      'errors': instance.errors?.map((e) => e?.toJson())?.toList(),
+    };
+
+ErrorDetail _$ErrorDetailFromJson(Map<String, dynamic> json) {
+  return ErrorDetail(
+    json['field'] as String,
+    json['message'] as String,
+  );
+}
+
+Map<String, dynamic> _$ErrorDetailToJson(ErrorDetail instance) =>
+    <String, dynamic>{
+      'field': instance.field,
+      'message': instance.message,
+    };
+
 CommodityGrid _$CommodityGridFromJson(Map<String, dynamic> json) {
   return CommodityGrid(
     json['totalPages'] as int,
@@ -106,7 +138,7 @@ RequestCommodity _$RequestCommodityFromJson(Map<String, dynamic> json) {
     currencyCode: json['currencyCode'] as String,
     typeId: json['typeId'] as int,
     propertyValues:
-        (json['propertyValues'] as Set)?.map((e) => e as int)?.toSet(),
+        (json['propertyValues'] as List)?.map((e) => e as int)?.toSet(),
     images: (json['images'] as List)?.map((e) => e as String)?.toList(),
     branchId: json['branchId'] as int,
   );
@@ -121,7 +153,7 @@ Map<String, dynamic> _$RequestCommodityToJson(RequestCommodity instance) =>
       'price': instance.price,
       'currencyCode': instance.currencyCode,
       'typeId': instance.typeId,
-      'propertyValues': instance.propertyValues,
+      'propertyValues': instance.propertyValues?.toList(),
       'images': instance.images,
       'branchId': instance.branchId,
     };
