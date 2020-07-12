@@ -1,13 +1,13 @@
-import 'package:E0ShopManager/screens/upload_images_screen.dart';
+import 'package:E0ShopManager/components/commodity.dart';
 import 'package:E0ShopManager/services/attribute.dart';
 import 'package:E0ShopManager/services/commodity.dart';
 import 'package:E0ShopManager/services/commodity_type.dart';
 import 'package:E0ShopManager/utils/constants.dart';
 import 'package:E0ShopManager/utils/eshop_manager.dart';
+import 'package:E0ShopManager/validators/commodity_validator.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart' show timeDilation;
 import 'package:flutter/services.dart';
-import 'package:intl/intl.dart';
 
 class ItemAddScreen extends StatefulWidget {
   final EshopManager eshopManager;
@@ -128,25 +128,6 @@ class ItemDetailsCard extends StatefulWidget {
 }
 
 class ItemDetailCardState extends State<ItemDetailsCard> {
-  String imgUrl = '';
-
-  String getItemFirstImage() {
-    return widget.item.images != null
-        ? (widget.item.images.length > 0 ? widget.item.images[0] ?? '' : '')
-        : '';
-  }
-
-  void updateImage() {
-    setState(() {
-      imgUrl = getItemFirstImage();
-    });
-  }
-
-  @override
-  void initState() {
-    updateImage();
-  }
-
   @override
   Widget build(BuildContext context) {
     return Card(
@@ -173,16 +154,7 @@ class ItemDetailCardState extends State<ItemDetailsCard> {
                             decoration: const InputDecoration(
                               hintText: 'Enter item name',
                             ),
-                            validator: (value) {
-                              if (value.isEmpty) {
-                                return 'Please enter item name';
-                              }
-                              if (value.trim().length < 8 ||
-                                  value.trim().length > 256) {
-                                return 'Name length 8-256';
-                              }
-                              return null;
-                            },
+                            validator: CommodityValidation.name,
                             onChanged: (value) {
                               widget.item.name = value.trim();
                             },
@@ -194,24 +166,9 @@ class ItemDetailCardState extends State<ItemDetailsCard> {
                 ),
                 Expanded(
                   flex: 2,
-                  child: Stack(
-                    children: [
-                      FadeInImage.assetNetwork(
-                        width: EshopNumbers.CREATE_IMAGE_WIDTH,
-                        height: EshopNumbers.CREATE_IMAGE_HEIGHT,
-                        fadeInCurve: Curves.bounceIn,
-                        fit: BoxFit.contain,
-                        image: imgUrl,
-                        placeholder: 'images/placeholder.png',
-                      ),
-                      Container(
-                        width: EshopNumbers.CREATE_IMAGE_WIDTH,
-                        height: EshopNumbers.CREATE_IMAGE_HEIGHT,
-                        alignment: Alignment.center,
-                        child: UploadImagesButton(
-                            onPressed: _navigateToUploadAndUpdateState),
-                      ),
-                    ],
+                  child: ItemUploadImage(
+                    images: widget.item.images,
+                    eshopManager: widget.eshopManager,
                   ),
                 ),
               ],
@@ -223,15 +180,7 @@ class ItemDetailCardState extends State<ItemDetailsCard> {
                 decoration: const InputDecoration(
                   hintText: 'Enter short description',
                 ),
-                validator: (value) {
-                  if (value.isEmpty) {
-                    return 'Please enter some short description';
-                  }
-                  if (value.trim().length < 16 || value.trim().length > 256) {
-                    return 'Short description length 16-256';
-                  }
-                  return null;
-                },
+                validator: CommodityValidation.shortDescription,
                 onChanged: (value) {
                   widget.item.shortDescription = value.trim();
                 },
@@ -245,15 +194,7 @@ class ItemDetailCardState extends State<ItemDetailsCard> {
                 decoration: const InputDecoration(
                   hintText: 'Enter overview',
                 ),
-                validator: (value) {
-                  if (value.isEmpty) {
-                    return 'Please enter overview';
-                  }
-                  if (value.trim().length < 64 || value.trim().length > 2048) {
-                    return 'overview length 64-2048';
-                  }
-                  return null;
-                },
+                validator: CommodityValidation.overview,
                 onChanged: (value) {
                   widget.item.overview = value.trim();
                 },
@@ -319,35 +260,6 @@ class ItemDetailCardState extends State<ItemDetailsCard> {
       ),
     );
   }
-
-  void _navigateToUploadAndUpdateState() async {
-    var formResp = await Navigator.push(
-      context,
-      MaterialPageRoute(builder: (context) {
-        return UpladImagesScreen(widget.eshopManager, widget.item);
-      }),
-    );
-    if (formResp == null) {
-      print('Update image after upload images');
-      updateImage();
-    }
-  }
-}
-
-class UploadImagesButton extends StatelessWidget {
-  final VoidCallback onPressed;
-
-  const UploadImagesButton({Key key, this.onPressed}) : super(key: key);
-
-  @override
-  Widget build(BuildContext context) => IconButton(
-        onPressed: onPressed,
-        icon: Icon(
-          Icons.cloud_upload,
-          color: Colors.yellow,
-          size: 33,
-        ),
-      );
 }
 
 class ItemAttributesCard extends StatefulWidget {

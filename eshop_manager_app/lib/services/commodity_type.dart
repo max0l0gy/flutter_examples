@@ -1,10 +1,11 @@
 import 'dart:convert';
+import 'package:E0ShopManager/utils/constants.dart';
 import 'package:E0ShopManager/utils/eshop_manager.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'networking.dart';
 part 'commodity_type.g.dart';
 
-const endpoint = 'http://192.168.199.5:8080';
+const endpoint = EshopManagerProperties.managerEndpoint;
 const listTypesUrl = '$endpoint/rest/api/public/types/';
 const addTypeUrl = '$endpoint/rest/api/private/type/';
 const deleteTypeUrl = '$endpoint/rest/api/private/type/{id}';

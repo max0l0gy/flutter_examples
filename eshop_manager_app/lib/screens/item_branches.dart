@@ -1,6 +1,8 @@
+import 'package:E0ShopManager/components/commodity.dart';
 import 'package:E0ShopManager/services/commodity.dart';
 import 'package:E0ShopManager/utils/constants.dart';
 import 'package:E0ShopManager/utils/eshop_manager.dart';
+import 'package:E0ShopManager/validators/commodity_validator.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
@@ -15,33 +17,45 @@ class ItemBranchesScreen extends StatefulWidget {
 }
 
 class _ItemBranchesState extends State<ItemBranchesScreen> {
-  final _formKey = GlobalKey<FormState>();
+  GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   CommodityModel _itemModel;
+  Commodity _item;
 
   @override
   Widget build(BuildContext context) {
-    Commodity item = widget.commodity;
     return Scaffold(
-      appBar: AppBar(
-        title: Text('Item id.${widget.commodity.id} branches'),
-      ),
-      body: Column(
-        children: [
-          ItemDetailsCard(
-            item: item,
-            itemModel: _itemModel,
+        appBar: AppBar(
+          title: Text('Item id.${widget.commodity.id} branches'),
+        ),
+        body: Form(
+          key: _formKey,
+          child: Column(
+            children: [
+              ItemDetailsCard(
+                eshopManager: widget.eshopManager,
+                item: _item,
+                itemModel: _itemModel,
+              ),
+              Expanded(
+                child: ListView(
+                  padding: const EdgeInsets.all(8.0),
+                  itemExtent: 106.0,
+                  children: _branches(),
+                ),
+              ),
+            ],
           ),
-          Expanded(
-            child: ListView(
-              padding: const EdgeInsets.all(8.0),
-              itemExtent: 106.0,
-              children: _branches(),
+        ),
+        floatingActionButton: Row(
+          mainAxisAlignment: MainAxisAlignment.end,
+          children: [
+            SaveCommodityInfoButton(
+              item: _item,
+              itemModel: _itemModel,
+              formGlobalKey: _formKey,
             ),
-          ),
-        ],
-      ),
-      floatingActionButton: AddBranchButton(),
-    );
+          ],
+        ));
   }
 
   List<BranchView> _branches() {
@@ -52,18 +66,50 @@ class _ItemBranchesState extends State<ItemBranchesScreen> {
         .toList();
   }
 
-  void _updateOrderStateAction() async {
-    if (_formKey.currentState.validate()) {
-      //todo update order state
-      var resp = null;
-      Navigator.pop(context, resp);
-    }
-  }
-
   @override
   void initState() {
+    _item = widget.commodity;
     _itemModel = CommodityModel(widget.eshopManager);
   }
+}
+
+class SaveCommodityInfoButton extends StatelessWidget {
+  final EshopManager eshopManager;
+  final Commodity item;
+  final CommodityModel itemModel;
+  final GlobalKey<FormState> formGlobalKey;
+
+  const SaveCommodityInfoButton(
+      {Key key,
+      this.eshopManager,
+      this.item,
+      this.itemModel,
+      this.formGlobalKey})
+      : super(key: key);
+
+  @override
+  Widget build(BuildContext context) =>
+      Builder(builder: (BuildContext context) {
+        return MaterialButton(
+          height: 50.0,
+          shape: CircleBorder(),
+          color: Colors.lime,
+          onPressed: () async {
+            if (formGlobalKey.currentState.validate()) {
+              print('Ready to update item ${item.name}');
+              Message mess = await itemModel.updateCommodity(item);
+              print('MESSAGE ${mess.message}');
+              //_itemUpdate.
+              //_navigateToNewBranch(context);
+              Scaffold.of(context)
+                  .showSnackBar(SnackBar(content: Text('Success')));
+            }
+          },
+          child: const Icon(Icons.save),
+        );
+      });
+
+  void _navigateToNewBranch(BuildContext context) {}
 }
 
 class AddBranchButton extends StatelessWidget {
@@ -83,45 +129,29 @@ class AddBranchButton extends StatelessWidget {
 }
 
 class ItemDetailsCard extends StatefulWidget {
+  final EshopManager eshopManager;
   final Commodity item;
   final CommodityModel itemModel;
 
   const ItemDetailsCard({
+    this.eshopManager,
     this.item,
     this.itemModel,
   });
 
   @override
   State<StatefulWidget> createState() => _ItemDetailsCardState(
-        id: item.id,
-        dateOfCreation: item.getDateOfCreation(),
-        itemModel: itemModel,
-        name: item.name,
-        shortDescription: item.shortDescription,
-        overview: item.overview,
-        imageURIlist: item.images,
+        item: this.item,
+        eshopManager: this.eshopManager,
       );
 }
 
 class _ItemDetailsCardState extends State<StatefulWidget> {
   final _formKey = GlobalKey<FormState>();
-  final int id;
-  final DateTime dateOfCreation;
-  final CommodityModel itemModel;
-  String name;
-  String shortDescription;
-  String overview;
-  List<String> imageURIlist;
+  final Commodity item;
+  final EshopManager eshopManager;
 
-  _ItemDetailsCardState({
-    this.id,
-    this.name,
-    this.dateOfCreation,
-    this.shortDescription,
-    this.overview,
-    this.imageURIlist,
-    this.itemModel,
-  });
+  _ItemDetailsCardState({this.item, this.eshopManager});
 
   @override
   Widget build(BuildContext context) {
@@ -146,7 +176,7 @@ class _ItemDetailsCardState extends State<StatefulWidget> {
                             EshopHeading('Item id.'),
                             Padding(
                               padding: const EdgeInsets.fromLTRB(5, 0, 0, 0),
-                              child: Text(id.toString()),
+                              child: Text(item.id.toString()),
                             ),
                           ],
                         ),
@@ -156,26 +186,22 @@ class _ItemDetailsCardState extends State<StatefulWidget> {
                               padding: const EdgeInsets.fromLTRB(10, 0, 0, 0),
                               child: Text('created: '),
                             ),
-                            Text(DateFormat('dd-MM-yyyy – kk:mm')
-                                .format(dateOfCreation)),
+                            Text(DateFormat('dd-MM-yyyy – kk:mm').format(
+                                DateTime.fromMicrosecondsSinceEpoch(
+                                    item.dateOfCreation))),
                           ],
                         ),
                         Container(
                           width: 200,
                           child: TextFormField(
                             maxLines: null,
-                            initialValue: name,
+                            initialValue: item.name,
                             decoration: const InputDecoration(
                               hintText: 'Enter item name',
                             ),
-                            validator: (value) {
-                              if (value.isEmpty) {
-                                return 'Please enter item name';
-                              }
-                              return null;
-                            },
+                            validator: CommodityValidation.name,
                             onChanged: (value) {
-                              name = value;
+                              item.name = value.trim();
                             },
                           ),
                         ),
@@ -185,13 +211,9 @@ class _ItemDetailsCardState extends State<StatefulWidget> {
                 ),
                 Expanded(
                   flex: 2,
-                  child: FadeInImage.assetNetwork(
-                    width: 150.0,
-                    height: 200.0,
-                    fadeInCurve: Curves.bounceIn,
-                    fit: BoxFit.contain,
-                    image: imageURIlist[0],
-                    placeholder: 'images/placeholder.png',
+                  child: ItemUploadImage(
+                    images: item.images,
+                    eshopManager: eshopManager,
                   ),
                 ),
               ],
@@ -200,18 +222,13 @@ class _ItemDetailsCardState extends State<StatefulWidget> {
               padding: const EdgeInsets.fromLTRB(10, 0, 0, 0),
               child: TextFormField(
                 maxLines: null,
-                initialValue: shortDescription,
+                initialValue: item.shortDescription,
                 decoration: const InputDecoration(
                   hintText: 'Enter short description',
                 ),
-                validator: (value) {
-                  if (value.isEmpty) {
-                    return 'Please enter some short description';
-                  }
-                  return null;
-                },
+                validator: CommodityValidation.shortDescription,
                 onChanged: (value) {
-                  shortDescription = value;
+                  item.shortDescription = value.trim();
                 },
               ),
             ),
@@ -219,18 +236,13 @@ class _ItemDetailsCardState extends State<StatefulWidget> {
               padding: const EdgeInsets.fromLTRB(10.0, 0, 0, 10),
               child: TextFormField(
                 maxLines: null,
-                initialValue: overview,
+                initialValue: item.overview,
                 decoration: const InputDecoration(
                   hintText: 'Enter overview',
                 ),
-                validator: (value) {
-                  if (value.isEmpty) {
-                    return 'Please enter overview';
-                  }
-                  return null;
-                },
+                validator: CommodityValidation.overview,
                 onChanged: (value) {
-                  overview = value;
+                  item.overview = value;
                 },
               ),
             ),

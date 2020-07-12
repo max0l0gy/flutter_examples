@@ -1,5 +1,9 @@
 import 'package:flutter/material.dart';
 
+class EshopManagerProperties {
+  static const String managerEndpoint = 'http://192.168.199.2:8080';
+}
+
 const kTextFieldInputDecoration = InputDecoration(
   fillColor: Colors.white,
   filled: true,

@@ -1,3 +1,4 @@
+import 'package:E0ShopManager/utils/constants.dart';
 import 'package:E0ShopManager/utils/eshop_manager.dart';
 import 'package:json_annotation/json_annotation.dart';
 
@@ -5,7 +6,7 @@ import 'networking.dart';
 
 part 'customer.g.dart';
 
-const endpoint = 'http://192.168.199.5:8080';
+const endpoint = EshopManagerProperties.managerEndpoint;
 const getCustomerByIdUrl = '$endpoint/rest/api/private/customer/id/{id}';
 
 class CommodityModel {

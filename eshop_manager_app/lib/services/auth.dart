@@ -1,9 +1,11 @@
 import 'dart:convert';
+import 'package:E0ShopManager/utils/constants.dart';
+
 import 'networking.dart';
 
 import 'package:E0ShopManager/utils/eshop_manager.dart';
 
-const endpoint = 'http://192.168.199.5:8080';
+const endpoint = EshopManagerProperties.managerEndpoint;
 const checkAuthUrl = '$endpoint/rest/api/private/checkAuth';
 
 class Authenticate {

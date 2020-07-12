@@ -32,7 +32,7 @@ CustomerOrder _$CustomerOrderFromJson(Map<String, dynamic> json) {
     json['customerId'] as int,
     json['dateOfCreation'] == null
         ? null
-        : DateTime.parse(json['dateOfCreation'] as String),
+        : DateTime.fromMillisecondsSinceEpoch(json['dateOfCreation'] as int),
     json['status'] as String,
     json['paymentProvider'] as String,
     json['paymentID'] as String,
@@ -84,7 +84,7 @@ Purchase _$PurchaseFromJson(Map<String, dynamic> json) {
     json['overview'] as String,
     json['dateOfCreation'] == null
         ? null
-        : DateTime.parse(json['dateOfCreation'] as String),
+        : DateTime.fromMicrosecondsSinceEpoch(json['dateOfCreation'] as int),
     json['type'] as String,
     (json['price'] as num)?.toDouble(),
     json['currency'] as String,

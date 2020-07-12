@@ -5,6 +5,7 @@ import 'package:E0ShopManager/utils/constants.dart';
 import 'package:E0ShopManager/utils/eshop_manager.dart';
 import 'package:json_annotation/json_annotation.dart';
 
+import 'attribute.dart';
 import 'commodity_type.dart';
 import 'networking.dart';
 
@@ -13,11 +14,13 @@ import 'networking.dart';
 /// the star denotes the source file name.
 part 'commodity.g.dart';
 
-const endpoint = 'http://192.168.199.5:8080';
+const endpoint = EshopManagerProperties.managerEndpoint;
 const listCommodityGridUrl =
     '$endpoint/rest/api/public/commodities/?page={page}&rows={rows}';
-const fileUplad = '$endpoint/rest/api/private/upload/';
+const fileUpload = '$endpoint/rest/api/private/file/';
 const addCommodityUrl = '$endpoint/rest/api/private/commodity/';
+const updateCommodityUrl = '$endpoint/rest/api/private/commodity';
+const updateBranchUrl = '$endpoint/rest/api/private/branch';
 
 class CommodityModel {
   final EshopManager eshopManager;
@@ -29,7 +32,7 @@ class CommodityModel {
   }
 
   Future<String> uploadFile(File file) async {
-    dynamic resp = await _networkHelper.postFile(file, fileUplad);
+    dynamic resp = await _networkHelper.postFile(file, fileUpload);
     return resp['uri'];
   }
 
@@ -44,6 +47,18 @@ class CommodityModel {
   Future<Message> addCommodity(RequestCommodity rc) async {
     dynamic message =
         await _networkHelper.postData(addCommodityUrl, rc.toJsonString());
+    return Message.fromJson(message);
+  }
+
+  Future<Message> updateCommodity(Commodity req) async {
+    dynamic message =
+        await _networkHelper.putData(updateCommodityUrl, req.toJsonString());
+    return Message.fromJson(message);
+  }
+
+  Future<Message> updateBranch(CommodityBranch req) async {
+    dynamic message =
+        await _networkHelper.putData(updateBranchUrl, req.toJsonString());
     return Message.fromJson(message);
   }
 }
@@ -115,6 +130,7 @@ class Commodity {
   factory Commodity.fromJson(Map<String, dynamic> json) =>
       _$CommodityFromJson(json);
   Map<String, dynamic> toJson() => _$CommodityToJson(this);
+  String toJsonString() => jsonEncode(toJson());
 }
 
 @JsonSerializable(explicitToJson: true)
@@ -132,6 +148,7 @@ class CommodityBranch {
   factory CommodityBranch.fromJson(Map<String, dynamic> json) =>
       _$CommodityBranchFromJson(json);
   Map<String, dynamic> toJson() => _$CommodityBranchToJson(this);
+  String toJsonString() => jsonEncode(toJson());
 }
 
 @JsonSerializable()
@@ -145,6 +162,7 @@ class AttributeDto {
   factory AttributeDto.fromJson(Map<String, dynamic> json) =>
       _$AttributeDtoFromJson(json);
   Map<String, dynamic> toJson() => _$AttributeDtoToJson(this);
+  String toJsonString() => jsonEncode(toJson());
 }
 
 @JsonSerializable()
@@ -177,6 +195,7 @@ class RequestCommodity {
     if (this.amount == null) this.amount = 1;
     if (this.price == null) this.price = 50;
   }
+
   Map<String, dynamic> toJson() => _$RequestCommodityToJson(this);
   String toJsonString() => jsonEncode(toJson());
 }

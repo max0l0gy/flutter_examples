@@ -8,9 +8,9 @@ import 'package:flutter/material.dart';
 
 class UpladImagesScreen extends StatefulWidget {
   final EshopManager eshopManager;
-  final RequestCommodity item;
+  final List<String> images;
 
-  UpladImagesScreen(this.eshopManager, this.item);
+  UpladImagesScreen(this.eshopManager, this.images);
 
   @override
   _UpladImagesScreenState createState() => _UpladImagesScreenState();
@@ -19,9 +19,9 @@ class UpladImagesScreen extends StatefulWidget {
 class _UpladImagesScreenState extends State<UpladImagesScreen> {
   List<UploadButtonOverImage> upladImages() {
     int idx = 0;
-    return widget.item.images
+    return widget.images
         .map((image) =>
-            UploadButtonOverImage(widget.eshopManager, widget.item, idx++))
+            UploadButtonOverImage(widget.eshopManager, widget.images, idx++))
         .toList();
   }
 
@@ -45,10 +45,10 @@ class _UpladImagesScreenState extends State<UpladImagesScreen> {
 
 class UploadButtonOverImage extends StatefulWidget {
   final EshopManager eshopManager;
-  final RequestCommodity item;
+  final List<String> images;
   final idx;
 
-  UploadButtonOverImage(this.eshopManager, this.item, this.idx);
+  UploadButtonOverImage(this.eshopManager, this.images, this.idx);
 
   @override
   UploadButtonOverImageState createState() => UploadButtonOverImageState();
@@ -58,15 +58,13 @@ class UploadButtonOverImageState extends State<UploadButtonOverImage> {
   String _imageUrl = '';
 
   String getItemImageUrlByIdx() {
-    return widget.item.images != null
-        ? (widget.item.images.length > 0
-            ? widget.item.images[widget.idx] ?? ''
-            : '')
+    return widget.images != null
+        ? (widget.images.length > 0 ? widget.images[widget.idx] ?? '' : '')
         : '';
   }
 
   void setImageToItem(String imageUrl) {
-    widget.item.images[widget.idx] = imageUrl;
+    widget.images[widget.idx] = imageUrl;
   }
 
   void uploadImageFromDevice() async {
