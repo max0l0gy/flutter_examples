@@ -4,6 +4,7 @@ import 'dart:io';
 import 'package:E0ShopManager/utils/constants.dart';
 import 'package:E0ShopManager/utils/eshop_manager.dart';
 import 'package:json_annotation/json_annotation.dart';
+import 'package:quiver/core.dart';
 
 import 'attribute.dart';
 import 'commodity_type.dart';
@@ -163,6 +164,13 @@ class AttributeDto {
       _$AttributeDtoFromJson(json);
   Map<String, dynamic> toJson() => _$AttributeDtoToJson(this);
   String toJsonString() => jsonEncode(toJson());
+  bool operator ==(o) =>
+      o is AttributeDto &&
+      o.name == name &&
+      o.value == value &&
+      o.measure == measure;
+  int get hashCode =>
+      hash3(name.hashCode, value.hashCode, measure ?? measure.hashCode);
 }
 
 @JsonSerializable()

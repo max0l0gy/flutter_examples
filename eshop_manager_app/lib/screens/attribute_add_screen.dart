@@ -142,5 +142,6 @@ class _AttributesState extends State<AttributeAddScreen> {
   void initState() {
     _attributeModel = AttributeModel(widget.eshopManager);
     _dataTypeList = widget.dataTypeList;
+    _dataType = _dataTypeList[0];
   }
 }

@@ -6,6 +6,8 @@ import 'package:E0ShopManager/validators/commodity_validator.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
+import 'item_branch_edit.dart';
+
 class ItemBranchesScreen extends StatefulWidget {
   final EshopManager eshopManager;
   final Commodity commodity;
@@ -62,6 +64,8 @@ class _ItemBranchesState extends State<ItemBranchesScreen> {
     return widget.commodity.branches
         .map((e) => BranchView(
               branch: e,
+              item: widget.commodity,
+              eshopManager: widget.eshopManager,
             ))
         .toList();
   }
@@ -253,12 +257,24 @@ class _ItemDetailsCardState extends State<StatefulWidget> {
   }
 }
 
-class BranchView extends StatelessWidget {
+class BranchView extends StatefulWidget {
+  final EshopManager eshopManager;
   final CommodityBranch branch;
-  const BranchView({this.branch});
+  final Commodity item;
+  const BranchView({this.branch, this.eshopManager, this.item});
 
-  List<Widget> _attributes() {
-    return branch.attributes
+  @override
+  State<StatefulWidget> createState() => BranchViewState();
+}
+
+class BranchViewState extends State<BranchView> {
+  List<Widget> _attributes = [];
+  int _amount = 0;
+  double _price = 0.0;
+  String _currency = '';
+
+  List<Widget> _attributesToView() {
+    return widget.branch.attributes
         .map((attribute) => Row(
               children: [
                 EshopHeading('${attribute.name}: '),
@@ -282,7 +298,7 @@ class BranchView extends StatelessWidget {
               child: Padding(
                 padding: const EdgeInsets.fromLTRB(10, 10, 0, 0),
                 child: Column(
-                  children: _attributes(),
+                  children: _attributes,
                 ),
               ),
             ),
@@ -291,24 +307,61 @@ class BranchView extends StatelessWidget {
               child: Padding(
                 padding: const EdgeInsets.fromLTRB(10, 10, 10, 10),
                 child: _BranchDetails(
-                  amount: branch.amount,
-                  price: branch.price,
-                  currency: branch.currency,
+                  amount: _amount,
+                  price: _price,
+                  currency: _currency,
                 ),
               ),
             ),
             IconButton(
-              onPressed: () {},
+              onPressed: () {
+                _navigateToEditBranch();
+              },
               icon: Icon(
                 Icons.edit_attributes,
                 color: Colors.yellow,
               ),
-              tooltip: 'Edit this Type',
+              tooltip: 'Edit item branch',
             ),
           ],
         ),
       ),
     );
+  }
+
+  void _fromBranchToState() {
+    setState(() {
+      _attributes = _attributesToView();
+      _amount = widget.branch.amount;
+      _price = widget.branch.price;
+      _currency = widget.branch.currency;
+    });
+  }
+
+  @override
+  void initState() {
+    _fromBranchToState();
+  }
+
+  void _navigateToEditBranch() async {
+    final result = await Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) {
+          return ItemBranchEditScreen(
+            widget.eshopManager,
+            widget.branch,
+            widget.item,
+          );
+        },
+      ),
+    );
+
+    if (result != null) {
+      final snackBar = SnackBar(content: Text('Branch updated'));
+      Scaffold.of(context).showSnackBar(snackBar);
+      _fromBranchToState();
+    }
   }
 }
 
