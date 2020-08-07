@@ -47,10 +47,19 @@ class _ItemBranchState extends State<ItemBranchEditScreen> {
             if (formGlobalKey.currentState.validate()) {
               Message message =
                   await _commodityModel.updateBranch(widget.branch);
-              Scaffold.of(context)
-                  .showSnackBar(SnackBar(content: Text('Success')));
               if (Message.SUCCESS == message.status) {
                 Navigator.pop(context, message);
+                Scaffold.of(context)
+                    .showSnackBar(SnackBar(content: Text('Success')));
+              } else {
+                print(message.status);
+                print(message.toJson());
+                String errors = '';
+                message.errors.forEach((error) {
+                  errors += ' ' + error.message;
+                });
+                Scaffold.of(context).showSnackBar(SnackBar(
+                    content: Text(message.message + ': ' + errors.trim())));
               }
             }
           },
@@ -186,11 +195,13 @@ class ItemAttributesCardState extends State<ItemAttributesCard> {
                 onChanged: (bool value) {
                   setState(() {
                     if (value) {
-                      //item.propertyValues.add(v.id);
+                      branch.attributes
+                          .add(AttributeDto(attr.name, v.value, attr.measure));
                     } else {
-                      //item.propertyValues.remove(v.id);
+                      branch.attributes.remove(
+                          AttributeDto(attr.name, v.value, attr.measure));
                     }
-                    print("attributeValues>>");
+                    print("attributeValues>> ${branch.attributes.length}");
                     //print(item.propertyValues);
                   });
                 },

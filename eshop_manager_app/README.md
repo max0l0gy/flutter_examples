@@ -6,7 +6,7 @@ MVP of E-Shop manager application.
 https://flutter.dev/docs/development/data-and-backend/json
 One-time code generation
 By running
-~~~~
+``~~~~
 flutter pub run build_runner build
 ~~~~
 Generating code continuously

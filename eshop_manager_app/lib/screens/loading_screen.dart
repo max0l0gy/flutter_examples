@@ -41,8 +41,8 @@ class _LoadingScreenState extends State<LoadingScreen> {
                   );
                 },
                 child: Text(
-                  "Types",
-                  style: TextStyle(fontSize: 20.0),
+                  "My Types of Items",
+                  style: TextStyle(fontSize: 22.0),
                 ),
               ),
               RaisedButton(
@@ -56,8 +56,8 @@ class _LoadingScreenState extends State<LoadingScreen> {
                   );
                 },
                 child: Text(
-                  "Items",
-                  style: TextStyle(fontSize: 20.0),
+                  "My Items",
+                  style: TextStyle(fontSize: 22.0),
                 ),
               ),
               RaisedButton(
@@ -71,8 +71,8 @@ class _LoadingScreenState extends State<LoadingScreen> {
                   );
                 },
                 child: Text(
-                  "Orders",
-                  style: TextStyle(fontSize: 20.0),
+                  "My Orders",
+                  style: TextStyle(fontSize: 22.0),
                 ),
               ),
             ],
