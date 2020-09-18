@@ -1,12 +1,13 @@
 import 'dart:convert';
 import 'dart:io';
+import 'dart:typed_data';
 
 import 'package:E0ShopManager/utils/constants.dart';
 import 'package:E0ShopManager/utils/eshop_manager.dart';
+import 'package:file_picker/file_picker.dart';
 import 'package:json_annotation/json_annotation.dart';
 import 'package:quiver/core.dart';
 
-import 'attribute.dart';
 import 'commodity_type.dart';
 import 'networking.dart';
 
@@ -18,7 +19,7 @@ part 'commodity.g.dart';
 const endpoint = EshopManagerProperties.managerEndpoint;
 const listCommodityGridUrl =
     '$endpoint/rest/api/public/commodities/?page={page}&rows={rows}';
-const fileUpload = '$endpoint/rest/api/private/file/';
+const fileUpload = '$endpoint/rest/api/private/file';
 const addCommodityUrl = '$endpoint/rest/api/private/commodity/';
 const updateCommodityUrl = '$endpoint/rest/api/private/commodity';
 const updateBranchUrl = '$endpoint/rest/api/private/branch';
@@ -32,7 +33,7 @@ class CommodityModel {
         NetworkHelper(basicCridentials: eshopManager.getCridentials());
   }
 
-  Future<String> uploadFile(File file) async {
+  Future<String> uploadFile(UploadFile file) async {
     dynamic resp = await _networkHelper.postFile(file, fileUpload);
     return resp['uri'];
   }
@@ -64,6 +65,15 @@ class CommodityModel {
   }
 }
 
+class UploadFile {
+
+  final String name;
+  final Uint8List bytes;
+
+  UploadFile({this.name, this.bytes});
+
+}
+
 @JsonSerializable(explicitToJson: true)
 class Message {
   static String SUCCESS = 'success';
@@ -74,8 +84,10 @@ class Message {
   List<ErrorDetail> errors;
 
   Message(this.status, this.url, this.message, this.errors);
+
   factory Message.fromJson(Map<String, dynamic> json) =>
       _$MessageFromJson(json);
+
   Map<String, dynamic> toJson() => _$MessageToJson(this);
 }
 
@@ -85,8 +97,10 @@ class ErrorDetail {
   String message;
 
   ErrorDetail(this.field, this.message);
+
   factory ErrorDetail.fromJson(Map<String, dynamic> json) =>
       _$ErrorDetailFromJson(json);
+
   Map<String, dynamic> toJson() => _$ErrorDetailToJson(this);
 }
 
@@ -107,6 +121,7 @@ class CommodityGrid {
 
   factory CommodityGrid.fromJson(Map<String, dynamic> json) =>
       _$CommodityGridFromJson(json);
+
   Map<String, dynamic> toJson() => _$CommodityGridToJson(this);
 }
 
@@ -130,7 +145,9 @@ class Commodity {
 
   factory Commodity.fromJson(Map<String, dynamic> json) =>
       _$CommodityFromJson(json);
+
   Map<String, dynamic> toJson() => _$CommodityToJson(this);
+
   String toJsonString() => jsonEncode(toJson());
 }
 
@@ -148,7 +165,9 @@ class CommodityBranch {
 
   factory CommodityBranch.fromJson(Map<String, dynamic> json) =>
       _$CommodityBranchFromJson(json);
+
   Map<String, dynamic> toJson() => _$CommodityBranchToJson(this);
+
   String toJsonString() => jsonEncode(toJson());
 }
 
@@ -162,13 +181,17 @@ class AttributeDto {
 
   factory AttributeDto.fromJson(Map<String, dynamic> json) =>
       _$AttributeDtoFromJson(json);
+
   Map<String, dynamic> toJson() => _$AttributeDtoToJson(this);
+
   String toJsonString() => jsonEncode(toJson());
+
   bool operator ==(o) =>
       o is AttributeDto &&
       o.name == name &&
       o.value == value &&
       o.measure == measure;
+
   int get hashCode =>
       hash3(name.hashCode, value.hashCode, measure ?? measure.hashCode);
 }
@@ -199,11 +222,17 @@ class RequestCommodity {
     this.branchId,
   }) {
     if (this.propertyValues == null) propertyValues = {};
-    if (this.images == null) this.images = List(EshopNumbers.UPLOAD_IMAGES);
+    if (this.images == null) {
+      this.images = [];
+      for (int i = 0; i < EshopNumbers.UPLOAD_IMAGES; i++) {
+        images.add(null);
+      }
+    }
     if (this.amount == null) this.amount = 1;
     if (this.price == null) this.price = 50;
   }
 
   Map<String, dynamic> toJson() => _$RequestCommodityToJson(this);
+
   String toJsonString() => jsonEncode(toJson());
 }

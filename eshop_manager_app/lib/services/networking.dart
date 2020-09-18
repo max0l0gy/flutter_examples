@@ -1,10 +1,9 @@
-import 'dart:io';
-import 'package:http/http.dart' as http;
-import 'package:path/path.dart';
-import 'package:async/async.dart';
 import 'dart:convert';
+import 'dart:io';
 
-import 'package:http/http.dart';
+import 'package:http/http.dart' as http;
+
+import 'commodity.dart';
 
 class NetworkHelper {
   final String basicCridentials;
@@ -36,12 +35,14 @@ class NetworkHelper {
     }
   }
 
-  Future<dynamic> postFile(File file, String url) async {
+  Future<dynamic> postFile(UploadFile file, String url) async {
     try {
       var uri = Uri.parse(url);
+      http.MultipartFile mf = await http.MultipartFile.fromBytes('file', file.bytes, filename: file.name );
+      // multipart that takes file.. here this "image_file" is a key of the API request
       var request = http.MultipartRequest('POST', uri)
         ..headers.addAll(basicAuthorizationHeader())
-        ..files.add(await http.MultipartFile.fromPath('file', file.path));
+        ..files.add(mf);
       // send
       http.StreamedResponse streamedResponse = await request.send();
       http.Response response = await http.Response.fromStream(streamedResponse);

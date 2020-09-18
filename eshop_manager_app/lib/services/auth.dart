@@ -1,9 +1,8 @@
-import 'dart:convert';
+
 import 'package:E0ShopManager/utils/constants.dart';
+import 'package:E0ShopManager/utils/eshop_manager.dart';
 
 import 'networking.dart';
-
-import 'package:E0ShopManager/utils/eshop_manager.dart';
 
 const endpoint = EshopManagerProperties.managerEndpoint;
 const checkAuthUrl = '$endpoint/rest/api/private/checkAuth';
@@ -22,6 +21,7 @@ class Authenticate {
 
   List<String> _convertAuthorities(dynamic authCheckResponse) {
     if (authCheckResponse == null) return [];
+    print("authCheckResponse ${authCheckResponse}");
     List<dynamic> auth = authCheckResponse['authorities'];
     return auth.map((e) => e['authority'].toString()).toList();
   }

@@ -1,9 +1,8 @@
-import 'dart:io';
-
 import 'package:E0ShopManager/services/commodity.dart';
 import 'package:E0ShopManager/utils/constants.dart';
 import 'package:E0ShopManager/utils/eshop_manager.dart';
-import 'package:file_picker/file_picker.dart';
+import 'package:file_picker_cross/file_picker_cross.dart';
+
 import 'package:flutter/material.dart';
 
 class UpladImagesScreen extends StatefulWidget {
@@ -17,12 +16,37 @@ class UpladImagesScreen extends StatefulWidget {
 }
 
 class _UpladImagesScreenState extends State<UpladImagesScreen> {
-  List<UploadButtonOverImage> upladImages() {
+  List<UploadButtonOverImage> imageGrid = [];
+
+  void addImage() {
+    setState(() {
+      print('add image');
+      widget.images.add('');
+      print('image size=${widget.images.length}');
+      imageGrid = getGridFromList(widget.images);
+    });
+  }
+
+  void removeImage(int index) {
+    setState(() {
+      print('remove image at ${index}');
+      widget.images.removeAt(index);
+      imageGrid = getGridFromList(widget.images);
+    });
+  }
+
+  List<UploadButtonOverImage> getGridFromList(List<String> images) {
+    print('Image list size=${images.length}');
     int idx = 0;
-    return widget.images
-        .map((image) =>
-            UploadButtonOverImage(widget.eshopManager, widget.images, idx++))
+    return images
+        .map((image) => UploadButtonOverImage(
+            widget.eshopManager, widget.images, idx++, removeImage))
         .toList();
+  }
+
+  @override
+  void initState() {
+    imageGrid = getGridFromList(widget.images);
   }
 
   @override
@@ -31,13 +55,24 @@ class _UpladImagesScreenState extends State<UpladImagesScreen> {
       appBar: AppBar(
         title: const Text('Upload images to commodity'),
       ),
-      body: GridView.count(
-        primary: false,
-        padding: const EdgeInsets.all(20),
-        crossAxisSpacing: 10,
-        mainAxisSpacing: 10,
-        crossAxisCount: 2,
-        children: upladImages(), //_typesCardsList,
+      body: Center(
+        child: GridView.count(
+          primary: false,
+          padding: const EdgeInsets.all(20),
+          crossAxisSpacing: 10,
+          mainAxisSpacing: 10,
+          crossAxisCount: 2,
+          children: imageGrid, //_typesCardsList,
+        ),
+      ),
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {
+          setState(() {
+            addImage();
+          });
+        },
+        tooltip: 'Add image',
+        child: const Icon(Icons.add),
       ),
     );
   }
@@ -47,8 +82,10 @@ class UploadButtonOverImage extends StatefulWidget {
   final EshopManager eshopManager;
   final List<String> images;
   final idx;
+  final void Function(int) onRemove;
 
-  UploadButtonOverImage(this.eshopManager, this.images, this.idx);
+  UploadButtonOverImage(
+      this.eshopManager, this.images, this.idx, this.onRemove);
 
   @override
   UploadButtonOverImageState createState() => UploadButtonOverImageState();
@@ -68,10 +105,21 @@ class UploadButtonOverImageState extends State<UploadButtonOverImage> {
   }
 
   void uploadImageFromDevice() async {
-    File file = await FilePicker.getFile();
-    if (file != null) {
-      String uploaded =
-          await CommodityModel(widget.eshopManager).uploadFile(file);
+    // show a dialog to open a file
+    FilePickerCross myFile = await FilePickerCross.importFromStorage(
+        type: FileTypeCross.custom,
+        // Available: `any`, `audio`, `image`, `video`, `custom`. Note: not available using FDE
+        fileExtension:
+            '.jpg, .jpeg' // Only if FileTypeCross.custom . May be any file extension like `.dot`, `.ppt,.pptx,.odp`
+        );
+
+    if (myFile.toUint8List() != null) {
+      String uploaded = await CommodityModel(widget.eshopManager).uploadFile(
+        UploadFile(
+          bytes: myFile.toUint8List(),
+          name: myFile.fileName,
+        ),
+      );
       if (uploaded != null) {
         setImageToItem(uploaded);
         print('uploaded: ${uploaded}');
@@ -87,33 +135,53 @@ class UploadButtonOverImageState extends State<UploadButtonOverImage> {
     _imageUrl = getItemImageUrlByIdx();
   }
 
+  Widget getImageWidget(String imageUrl) {
+    return FadeInImage.assetNetwork(
+      width: EshopNumbers.CREATE_IMAGE_WIDTH,
+      height: EshopNumbers.CREATE_IMAGE_HEIGHT,
+      fadeInCurve: Curves.bounceIn,
+      fit: BoxFit.contain,
+      image: _imageUrl,
+      placeholder: 'images/placeholder.png',
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Expanded(
-      flex: 2,
+    return Container(
+      width: EshopNumbers.CREATE_IMAGE_WIDTH,
+      height: EshopNumbers.CREATE_IMAGE_HEIGHT,
+      alignment: Alignment.bottomRight,
       child: Stack(
         children: [
-          FadeInImage.assetNetwork(
-            width: EshopNumbers.CREATE_IMAGE_WIDTH,
-            height: EshopNumbers.CREATE_IMAGE_HEIGHT,
-            fadeInCurve: Curves.bounceIn,
-            fit: BoxFit.contain,
-            image: _imageUrl,
-            placeholder: 'images/placeholder.png',
-          ),
-          Container(
-            width: EshopNumbers.CREATE_IMAGE_WIDTH,
-            height: EshopNumbers.CREATE_IMAGE_HEIGHT,
-            alignment: Alignment.center,
-            child: IconButton(
-              onPressed: () {
-                uploadImageFromDevice();
-              },
-              icon: Icon(
-                Icons.cloud_upload,
-                color: Colors.yellow,
-                size: 33,
-              ),
+          getImageWidget(_imageUrl),
+          Padding(
+            padding: const EdgeInsets.fromLTRB(50, 0, 0, 0),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: [
+                Container(height: EshopNumbers.CREATE_IMAGE_HEIGHT,),
+                IconButton(
+                  onPressed: () {
+                    uploadImageFromDevice();
+                  },
+                  icon: Icon(
+                    Icons.cloud_upload,
+                    color: Colors.yellow,
+                    size: 33,
+                  ),
+                ),
+                IconButton(
+                  onPressed: () {
+                    widget.onRemove(widget.idx);
+                  },
+                  icon: Icon(
+                    Icons.remove_circle,
+                    color: Colors.yellow,
+                    size: 33,
+                  ),
+                )
+              ],
             ),
           ),
         ],
