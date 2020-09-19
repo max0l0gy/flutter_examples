@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/bitcoin_ticker/bitcoin_ticker.iml" filepath="$PROJECT_DIR$/bitcoin_ticker/bitcoin_ticker.iml" />
+      <module fileurl="file://$PROJECT_DIR$/clima/clima.iml" filepath="$PROJECT_DIR$/clima/clima.iml" />
+      <module fileurl="file://$PROJECT_DIR$/my_card/android/app/src/debug/debug.iml" filepath="$PROJECT_DIR$/my_card/android/app/src/debug/debug.iml" />
+      <module fileurl="file://$PROJECT_DIR$/dicee/dicee.iml" filepath="$PROJECT_DIR$/dicee/dicee.iml" />
+      <module fileurl="file://$PROJECT_DIR$/eshop_manager_app/eshop_manager_app.iml" filepath="$PROJECT_DIR$/eshop_manager_app/eshop_manager_app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/i_am_rich/i_am_rich.iml" filepath="$PROJECT_DIR$/i_am_rich/i_am_rich.iml" />
+      <module fileurl="file://$PROJECT_DIR$/magic_ball/magic_ball.iml" filepath="$PROJECT_DIR$/magic_ball/magic_ball.iml" />
+      <module fileurl="file://$PROJECT_DIR$/my_card/my_card.iml" filepath="$PROJECT_DIR$/my_card/my_card.iml" />
+      <module fileurl="file://$PROJECT_DIR$/my_card/android/app/src/profile/profile.iml" filepath="$PROJECT_DIR$/my_card/android/app/src/profile/profile.iml" />
+    </modules>
+  </component>
+</project>

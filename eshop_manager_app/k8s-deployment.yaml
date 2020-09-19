@@ -44,7 +44,7 @@ spec:
       terminationGracePeriodSeconds: 10
       containers:
         - name: eshop-manager-web
-          image: maxmorev/eshop-manager-web:beta6
+          image: maxmorev/eshop-manager-web:beta7
           ports:
             - containerPort: 80
               name: nginx
