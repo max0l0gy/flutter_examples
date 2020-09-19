@@ -39,9 +39,12 @@ class _ItemAddState extends State<ItemAddScreen> {
             Column(
               children: [
                 ItemDetailsCard(_item, widget.eshopManager),
-                ItemAttributesCard(
-                  item: _item,
-                  attributes: _attributes,
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(3, 0, 33, 100),
+                  child: ItemAttributesCard(
+                    item: _item,
+                    attributes: _attributes,
+                  ),
                 ),
               ],
             )

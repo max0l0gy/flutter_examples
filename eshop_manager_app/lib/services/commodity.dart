@@ -41,7 +41,8 @@ class CommodityModel {
   Future<CommodityGrid> getCommodityGrid(int page, int rows) async {
     String getUrl = listCommodityGridUrl.replaceAll('{page}', page.toString());
     getUrl = getUrl.replaceAll('{rows}', rows.toString());
-    dynamic items = await _networkHelper.getPrivateData(getUrl);
+    print('GET commodities URL=${getUrl}');
+    dynamic items = await _networkHelper.getData(getUrl);
     print(items);
     return CommodityGrid.fromJson(items);
   }

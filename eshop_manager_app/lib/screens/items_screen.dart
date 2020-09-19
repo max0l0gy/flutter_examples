@@ -86,7 +86,7 @@ class _ItemsScreenState extends State<ItemsScreen> {
   }
 
   void _loadItems() async {
-    CommodityGrid itemGrid = await _commodityModel.getCommodityGrid(1, 10);
+    CommodityGrid itemGrid = await _commodityModel.getCommodityGrid(1, 20);
     _updateUI(itemGrid);
   }
 
@@ -102,8 +102,11 @@ class _ItemsScreenState extends State<ItemsScreen> {
       appBar: AppBar(
         title: const Text('Items'),
       ),
-      body: ListView(
-        children: _itemListView,
+      body: Padding(
+        padding: const EdgeInsets.fromLTRB(10, 10, 10, 100),
+        child: ListView(
+          children: _itemListView,
+        ),
       ),
       floatingActionButton: Builder(builder: (BuildContext context) {
         return new FloatingActionButton(
